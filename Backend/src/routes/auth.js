@@ -8,7 +8,7 @@ router.post('/signup', async (req, res) => {
     try {
         validateSignupData(req);
 
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, skills } = req.body;
 
         const passwordHash = await bcrypt.hash(password, 10);
 
@@ -17,6 +17,7 @@ router.post('/signup', async (req, res) => {
             lastName,
             email,
             password: passwordHash,
+            skills
         })
 
         const savedUser = await user.save();
@@ -28,8 +29,7 @@ router.post('/signup', async (req, res) => {
             secure: true,
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
         })
-        res.json({ message: "User signed up successfully", user: savedUser });
-        res.status(500).send("Error saving user", error)
+        return res.json({ message: "User signed up successfully", user: savedUser });
     } catch (error) {
         res.status(400).send("Error while signup :" + error.message);
     }
